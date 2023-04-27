@@ -1,4 +1,4 @@
-# Aphakia mouse RNA-Seq
+# Aphakia mouse RNA-Seq (220120_A00558_0160_AH5V77DSX3)
 
 Aphakia mice are natural occurring mutant mice for PITX3 with two deletions ...expression is much lower  
 
