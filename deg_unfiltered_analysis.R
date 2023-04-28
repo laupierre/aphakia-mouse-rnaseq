@@ -25,4 +25,71 @@ colnames (a) [colnames (a) == "gene_type.x"] <- "gene_type"
 #write.xlsx (a, "star_gene_raw_counts.xlsx", rowNames=F)
 
 
+annot <- a
+annot <- annot[ ,c("Geneid", "gene_name", "gene_type", "mgi_id", "external_gene_name", "description")]
+
+
+torm <- c("gene_name", "gene_type", "mgi_id", "external_gene_name", "description")
+a <- a[ ,!colnames (a) %in% torm]
+row.names (a) <- a[ ,1]
+colnames (a) <- gsub ("star.IIT_RNM_", "", colnames (a))
+a <- a[ ,-1]
+
+
+pheno <- read.delim ("Moratalla phenodata 220303.txt")
+pheno <- pheno[pheno$area == "SN", ]
+pheno <- pheno[pheno$experiment ==1, ]
+idx <- match (colnames (a), pheno$sample)
+pheno <- pheno[idx, ]
+
+stopifnot (colnames (a) == pheno$sample)
+
+
+dds <- DESeqDataSetFromMatrix(countData = round (a), colData = pheno, design = ~ genotype)
+
+keep <- rowSums(counts(dds) >= 10) >= 5
+dds <- dds[keep,]
+dds
+
+dds <- DESeq(dds)
+res <- results(dds, contrast=c("genotype", "AK", "WT"))
+
+res <- merge (data.frame (res), counts (dds), by="row.names")
+res <- merge (res, annot, by.x="Row.names", by.y="Geneid")
+colnames (res)[1] <- "Geneid"
+res <- res[order (res$padj), ]
+
+# Sanity check
+res[res$gene_name == "Snca", ] 
+
+
+## heatmap plot
+# Th, DDC, NR4A2, SLC6A3, SNCA
+select <- c("ENSMUSG00000000214.12", "ENSMUSG00000020182.17", "ENSMUSG00000026826.14", "ENSMUSG00000021609.7", "ENSMUSG00000025889.14")
+
+df <- as.data.frame(colData(dds)[,c("genotype","sample")])
+
+pdf ("Heatmap plot.pdf")
+pheatmap( log2 (counts(dds,normalized=TRUE)+1) [row.names (counts(dds)) %in% select, ], cluster_rows=FALSE, show_rownames=TRUE, cluster_cols=FALSE, annotation_col=df)
+dev.off ()
+
+
+## PCA plot
+vsd <- vst(dds, blind=FALSE)
+pcaData <- plotPCA(vsd, intgroup=c("genotype", "sample"), returnData=TRUE)
+percentVar <- round(100 * attr(pcaData, "percentVar"))
+
+ggplot(pcaData, aes(PC1, PC2, color=genotype, label=sample)) +
+  		geom_point(size=3) +
+  		xlab(paste0("PC1: ",percentVar[1],"% variance")) +
+  		ylab(paste0("PC2: ",percentVar[2],"% variance")) + 
+  		geom_text_repel()  + 
+		  coord_fixed () 
+
+ggsave ("PCA plot.pdf")
+
+
+
+
+
 
