@@ -39,6 +39,29 @@ a <- a[ ,-1]
 pheno <- read.delim ("Moratalla phenodata 220303.txt")
 pheno <- pheno[pheno$area == "SN", ]
 pheno <- pheno[pheno$experiment ==1, ]
+
+## WT are WT1SN, WT2SN, (WT4SN), WT5SN
+## low AK are AK2SN, AK4SN, AK7SN
+## high AK are AK5SN, AK6SN, AK8SN, AK9SN
+
+pheno$genotype [pheno$sample == "AK2SN"] <- "AK2"
+pheno$genotype [pheno$sample == "AK4SN"] <- "AK2"
+pheno$genotype [pheno$sample == "AK7SN"] <- "AK2"
+
+pheno$genotype [pheno$sample == "AK5SN"] <- "AK1"
+pheno$genotype [pheno$sample == "AK6SN"] <- "AK1"
+pheno$genotype [pheno$sample == "AK8SN"] <- "AK1"
+pheno$genotype [pheno$sample == "AK9SN"] <- "AK1"
+
+pheno$genotype [pheno$sample == "WT1SN"] <- "WT1"
+pheno$genotype [pheno$sample == "WT2SN"] <- "WT1"
+pheno$genotype [pheno$sample == "WT4SN"] <- "WT1"
+pheno$genotype [pheno$sample == "WT5SN"] <- "WT1"
+
+pheno <- pheno[pheno$genotype %in% c("AK1", "AK2", "WT1"), ]
+pheno
+
+a <- a[ ,colnames (a) %in% pheno$sample]
 idx <- match (colnames (a), pheno$sample)
 pheno <- pheno[idx, ]
 
