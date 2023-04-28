@@ -81,6 +81,7 @@ dds <- DESeq(dds)
 res <- results(dds, contrast=c("genotype", "AK1", "WT1"))
 
 res <- merge (data.frame (res), counts (dds), by="row.names")
+#res <- merge (data.frame (res), round (counts (dds, normalized=TRUE)), by="row.names")
 res <- merge (res, annot, by.x="Row.names", by.y="Geneid")
 colnames (res)[1] <- "Geneid"
 res <- res[order (res$padj), ]
@@ -105,6 +106,7 @@ dev.off ()
 res <- results(dds, contrast=c("genotype", "AK2", "WT1"))
 
 res <- merge (data.frame (res), counts (dds), by="row.names")
+#res <- merge (data.frame (res), round (counts (dds, normalized=TRUE)), by="row.names")
 res <- merge (res, annot, by.x="Row.names", by.y="Geneid")
 colnames (res)[1] <- "Geneid"
 res <- res[order (res$padj), ]
