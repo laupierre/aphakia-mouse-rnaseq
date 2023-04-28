@@ -60,12 +60,12 @@ colnames (res)[1] <- "Geneid"
 res <- res[order (res$padj), ]
 
 # Sanity check
-res[res$gene_name == "Snca", ] 
+res[res$gene_name == "Pitx3", ] 
 
 
 ## heatmap plot
-# Th, DDC, NR4A2, SLC6A3, SNCA
-select <- c("ENSMUSG00000000214.12", "ENSMUSG00000020182.17", "ENSMUSG00000026826.14", "ENSMUSG00000021609.7", "ENSMUSG00000025889.14")
+# Th, DDC, NR4A2, SLC6A3 (known target), SNCA, Pitx3, SLC18A2 (known target, see doi: 10.1111/j.1471-4159.2009.06404.x), Tcf7l2
+select <- c("ENSMUSG00000000214.12", "ENSMUSG00000020182.17", "ENSMUSG00000026826.14", "ENSMUSG00000021609.7", "ENSMUSG00000025889.14", "ENSMUSG00000025229.16", "ENSMUSG00000025094.9", "ENSMUSG00000024985.21")
 
 df <- as.data.frame(colData(dds)[,c("genotype","sample")])
 
